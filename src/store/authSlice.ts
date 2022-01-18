@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from '../lib/axios';
-import { addTokenToStorage } from '../utils/auth';
 import { AxiosError } from 'axios';
+import axios from '../lib/axios';
+import { addTokenToStorage, removeTokenFromStorage } from '../utils/auth';
 
 type ResponseError = { message: string };
 
@@ -27,6 +27,11 @@ export const login = createAsyncThunk(
 export const getUser = createAsyncThunk('auth/user', async () => {
   const response = await axios.get('/api/user');
   return response.data;
+});
+
+export const logout = createAsyncThunk('auth/logout', async () => {
+  removeTokenFromStorage();
+  return Promise.resolve();
 });
 
 type AuthState = {
@@ -61,6 +66,10 @@ const authSlice = createSlice({
     builder.addCase(getUser.rejected, (state, action) => {
       console.error(action.error.message);
       state.loading = false;
+    });
+    builder.addCase(logout.fulfilled, (state, action) => {
+      state.user = null;
+      state.isAuthenticated = false;
     });
   },
 });

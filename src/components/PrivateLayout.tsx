@@ -1,10 +1,17 @@
 import { ReactNode } from 'react';
-import { Box, Container } from '@mui/material';
+import { Box, Container, Button } from '@mui/material';
 import AppLoading from './AppLoading';
 import useAuth from '../hooks/useAuth';
+import { useAppDispatch } from '../store';
+import { logout } from '../store/authSlice';
 
 const PrivateLayout = ({ children }: { children: ReactNode }): JSX.Element => {
   const { loading } = useAuth({ middleware: 'auth' });
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
 
   if (loading) {
     return <AppLoading />;
@@ -22,6 +29,11 @@ const PrivateLayout = ({ children }: { children: ReactNode }): JSX.Element => {
         }}
       >
         {children}
+        <Box maxWidth="sm">
+          <Button variant="contained" onClick={handleLogout}>
+            Logout
+          </Button>
+        </Box>
       </Box>
     </Container>
   );
