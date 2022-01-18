@@ -1,14 +1,7 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-const users = [
-  {
-    email: 'hossein@example.com',
-    name: 'Hossein',
-    password: bcrypt.hashSync('123456', 10),
-  },
-];
+import { users } from './user';
 
 type ResponseData =
   | { accessToken: string; user: { email: string; name: string } }

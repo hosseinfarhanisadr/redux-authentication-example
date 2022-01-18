@@ -4,9 +4,10 @@ import * as Yup from 'yup';
 import { LoadingButton } from '@mui/lab';
 import { FormikProps, useFormik, FormikHelpers } from 'formik';
 import { Box, Container, TextField, Typography, Alert } from '@mui/material';
+import useAuth from '../hooks/useAuth';
 import { useAppDispatch } from '../store';
 import { login } from '../store/authSlice';
-import { useRouter } from 'next/router';
+import AppLoading from '../components/AppLoading';
 
 const validationSchema = Yup.object({
   email: Yup.string()
@@ -19,7 +20,7 @@ type FormValues = { email: string; password: string };
 
 const Login: NextPage = () => {
   const dispatch = useAppDispatch();
-  const router = useRouter();
+  const { loading } = useAuth({ middleware: 'guest' });
 
   const handleLogin = async (
     values: FormValues,
@@ -33,7 +34,7 @@ const Login: NextPage = () => {
       );
       formikHelpers.setSubmitting(false);
     } else {
-      router.push('/');
+      formikHelpers.resetForm();
     }
   };
 
@@ -54,6 +55,10 @@ const Login: NextPage = () => {
     validationSchema,
     onSubmit: handleLogin,
   });
+
+  if (loading) {
+    return <AppLoading />;
+  }
 
   return (
     <>

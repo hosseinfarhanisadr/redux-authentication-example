@@ -24,6 +24,11 @@ export const login = createAsyncThunk(
   }
 );
 
+export const getUser = createAsyncThunk('auth/user', async () => {
+  const response = await axios.get('/api/user');
+  return response.data;
+});
+
 type AuthState = {
   loading: boolean;
   isAuthenticated: boolean;
@@ -44,6 +49,18 @@ const authSlice = createSlice({
     builder.addCase(login.fulfilled, (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = true;
+    });
+    builder.addCase(getUser.pending, (state, action) => {
+      state.loading = true;
+    });
+    builder.addCase(getUser.fulfilled, (state, action) => {
+      state.user = action.payload;
+      state.isAuthenticated = true;
+      state.loading = false;
+    });
+    builder.addCase(getUser.rejected, (state, action) => {
+      console.error(action.error.message);
+      state.loading = false;
     });
   },
 });
